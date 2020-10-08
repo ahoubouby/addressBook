@@ -11,7 +11,7 @@ public interface BaseDao<I extends Serializable, T> {
 
     int delete(T id);
 
-    List<I> selectAll();    
+    List<I> getAll();
 
     Optional<I> findById(T id);
 
