@@ -1,4 +1,4 @@
-package com.ahoubouby.utils;
+package com.ahoubouby.configs;
 /*
  * ahoubouby created on 10/8/20
  * E-MAIL: ahoubouby@gmail.com
