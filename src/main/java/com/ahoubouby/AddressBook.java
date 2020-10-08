@@ -1,4 +1,4 @@
-package com.ahoubouby.dao;
+package com.ahoubouby;
 /*
  * ahoubouby created on 10/8/20
  * E-MAIL: ahoubouby@gmail.com

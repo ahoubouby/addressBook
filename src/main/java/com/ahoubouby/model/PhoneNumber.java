@@ -4,8 +4,6 @@ package com.ahoubouby.model;
  * E-MAIL: ahoubouby@gmail.com
  */
 
-import com.ahoubouby.dao.model.Phone;
-
 import java.io.Serializable;
 import java.util.Objects;
 
