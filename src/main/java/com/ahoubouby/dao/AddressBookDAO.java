@@ -33,7 +33,15 @@ public class AddressBookDAO implements BaseDao<Contact, String> {
     }
     @Override
     public Contact save(Contact entity) {
-        return null;
+        try {
+            fileDataSource.addObject(entity);
+            return entity;
+        }catch (IOException exp) {
+            exp.printStackTrace();
+            return  null ;
+        }
+       
+        
     }
 
     @Override

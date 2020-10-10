@@ -9,11 +9,8 @@ import com.ahoubouby.configs.FileDataSource;
 import com.ahoubouby.dao.AddressBookDAO;
 import com.ahoubouby.model.*;
 import com.google.common.base.Optional;
-import com.sun.org.apache.xerces.internal.impl.dv.xs.AbstractDateTimeDV;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.C;
 
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,6 +49,7 @@ public class CommandLineHelper {
 
     private static String storageFilePath;
     private static final Scanner SCANNER = new Scanner(System.in);
+    private static final Scanner SCANNER_INT = new Scanner(System.in);
     private static FileDataSource fileDataSource = null;
     private static AddressBookDAO addressBookDAO = null;
 
@@ -276,8 +274,8 @@ public class CommandLineHelper {
         contactBuilder.withPhoneNumber(new PhoneNumber(SCANNER.nextLine()));
         showFieldName("Email");
         contactBuilder.withEmail(new Email(SCANNER.nextLine()));
-//        showFieldName("Age");
-//        contactBuilder.withAge(SCANNER.nextInt());
+        showFieldName("Age");
+        contactBuilder.withAge(SCANNER_INT.nextInt());
         showFieldName("hairColor");
         String hair = SCANNER.nextLine();
         Optional<String> optHair = hair.trim().isEmpty() ? Optional.absent() : Optional.of(hair);
@@ -286,6 +284,7 @@ public class CommandLineHelper {
         showFieldName("category");
         String catCode = SCANNER.nextLine(); 
         contactBuilder.withCategory(getCategory(catCode));
+        addressBookDAO.save(contactBuilder.build());
 
         return contactBuilder.build().toString();
     }
@@ -308,8 +307,8 @@ public class CommandLineHelper {
 //                return executeClearAddressBook();
 //            case COMMAND_HELP_WORD:
 //                return getUsageInfoForAllCommands();
-//            case COMMAND_EXIT_WORD:
-//                executeExitProgramRequest();
+            case COMMAND_EXIT_WORD:
+                exitProgram();
             // Fallthrough
             default:
                 return getMessageForInvalidCommandInput(commandType, getUsageInfoForAllCommands());

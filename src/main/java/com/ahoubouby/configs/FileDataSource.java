@@ -10,7 +10,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 
-public class FileDataSource {
+public class FileDataSource implements Closeable{
     ObjectOutputStream oos;
     ObjectInputStream ois;
     private static FileDataSource instance = null;
@@ -30,10 +30,16 @@ public class FileDataSource {
     
     public void  addObject (Object obejct)  throws IOException{
         oos.writeObject(obejct);
+        oos.flush();
     }
 
     public void  read (Contact contact)  throws IOException, ClassNotFoundException{
-        ArrayList<Contact> contactList =    (ArrayList<Contact> )ois.readObject();
+        ArrayList<Contact> contactList =   (ArrayList<Contact> )ois.readObject();
     }
 
+    @Override
+    public void close() throws IOException {
+        oos.close();
+        ois.close();
+    }
 }
