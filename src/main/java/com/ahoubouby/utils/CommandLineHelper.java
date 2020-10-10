@@ -7,12 +7,13 @@ package com.ahoubouby.utils;
 
 import com.ahoubouby.configs.FileDataSource;
 import com.ahoubouby.dao.AddressBookDAO;
-import com.ahoubouby.model.Contact;
-import com.ahoubouby.model.ContactBuilder;
-import com.ahoubouby.model.PhoneNumber;
+import com.ahoubouby.model.*;
+import com.google.common.base.Optional;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.AbstractDateTimeDV;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.C;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,7 +53,7 @@ public class CommandLineHelper {
     private static String storageFilePath;
     private static final Scanner SCANNER = new Scanner(System.in);
     private static FileDataSource fileDataSource = null;
-    private static AddressBookDAO addressBookDAO = null ;
+    private static AddressBookDAO addressBookDAO = null;
 
     public static void showWelcomeMessage() {
         showToUser(DIVIDER, DIVIDER, VERSION, MESSAGE_WELCOME, DIVIDER);
@@ -66,9 +67,10 @@ public class CommandLineHelper {
                                 + LINE_PREFIX));
     }
 
-    public static void showFieldName (String filedName) {
-        System.out.println(filedName +"#");
+    public static void showFieldName(String filedName) {
+        System.out.println(filedName + "#");
     }
+
     public static void exitProgram() {
         showToUser(MESSAGE_GOODBYE, DIVIDER, DIVIDER);
         System.exit(0);
@@ -252,7 +254,18 @@ public class CommandLineHelper {
                 + getUsageInfoForHelpCommand();
     }
 
-    private static String executeAddContact(String surName ) {
+    private  static Category getCategory(String catCode) {
+        switch (catCode) {
+            case "f":
+                return new Family(Relationship.PARENT);
+            case "fr":
+                return new Friends(10);
+            default:
+                return new Acquaintance();
+        }
+    }
+
+    private static String executeAddContact(String surName) {
         ContactBuilder contactBuilder = ContactBuilder.builder();
 
         showFieldName("name");
@@ -261,7 +274,20 @@ public class CommandLineHelper {
         contactBuilder.withSurname(SCANNER.nextLine());
         showFieldName("PhoneNumber");
         contactBuilder.withPhoneNumber(new PhoneNumber(SCANNER.nextLine()));
-        return contactBuilder.build().toString() ;
+        showFieldName("Email");
+        contactBuilder.withEmail(new Email(SCANNER.nextLine()));
+//        showFieldName("Age");
+//        contactBuilder.withAge(SCANNER.nextInt());
+        showFieldName("hairColor");
+        String hair = SCANNER.nextLine();
+        Optional<String> optHair = hair.trim().isEmpty() ? Optional.absent() : Optional.of(hair);
+        contactBuilder.withHairColor(optHair);
+
+        showFieldName("category");
+        String catCode = SCANNER.nextLine(); 
+        contactBuilder.withCategory(getCategory(catCode));
+
+        return contactBuilder.build().toString();
     }
 
     public static String executeCommand(String userInputString) {
