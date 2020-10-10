@@ -30,6 +30,8 @@ public class Contact implements Serializable {
         this.category = category;
       this.hairColor = hairColor;
     }
+    
+    
     public String getName() {
         return name;
     }
@@ -99,6 +101,7 @@ public class Contact implements Serializable {
                 '}';
     }
 
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

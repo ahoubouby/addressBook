@@ -4,6 +4,8 @@ package com.ahoubouby.utils;
  * E-MAIL: ahoubouby@gmail.com
  */
 
+import com.ahoubouby.model.Contact;
+
 public interface Commands {
 
 

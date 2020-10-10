@@ -8,6 +8,8 @@ package com.ahoubouby.utils;
 import com.ahoubouby.configs.FileDataSource;
 import com.ahoubouby.dao.AddressBookDAO;
 import com.ahoubouby.model.Contact;
+import com.ahoubouby.model.ContactBuilder;
+import com.ahoubouby.model.PhoneNumber;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.AbstractDateTimeDV;
 import org.apache.commons.lang3.StringUtils;
 
@@ -64,6 +66,9 @@ public class CommandLineHelper {
                                 + LINE_PREFIX));
     }
 
+    public static void showFieldName (String filedName) {
+        System.out.println(filedName +"#");
+    }
     public static void exitProgram() {
         showToUser(MESSAGE_GOODBYE, DIVIDER, DIVIDER);
         System.exit(0);
@@ -248,13 +253,15 @@ public class CommandLineHelper {
     }
 
     private static String executeAddContact(String surName ) {
-        try {
-            addressBookDAO.addString(surName);    
-        }catch (IOException ex){
-            ex.printStackTrace();
-        }
-        
-        return surName ;
+        ContactBuilder contactBuilder = ContactBuilder.builder();
+
+        showFieldName("name");
+        contactBuilder.withName(SCANNER.nextLine());
+        showFieldName("surname");
+        contactBuilder.withSurname(SCANNER.nextLine());
+        showFieldName("PhoneNumber");
+        contactBuilder.withPhoneNumber(new PhoneNumber(SCANNER.nextLine()));
+        return contactBuilder.build().toString() ;
     }
 
     public static String executeCommand(String userInputString) {
