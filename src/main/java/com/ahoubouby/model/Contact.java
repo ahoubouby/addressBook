@@ -7,6 +7,7 @@ package com.ahoubouby.model;
 import com.google.common.base.Optional;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Contact implements Serializable {
     private static final long serialVersionUID = 5196217427868307382L;
@@ -96,5 +97,20 @@ public class Contact implements Serializable {
                 ", hairColor='" + hairColor + '\'' +
                 ", category=" + category +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return surname.equals(contact.surname) &&
+                phoneNumber.equals(contact.phoneNumber) &&
+                email.equals(contact.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(surname, phoneNumber, email);
     }
 }

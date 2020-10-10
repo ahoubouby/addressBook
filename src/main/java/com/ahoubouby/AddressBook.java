@@ -10,26 +10,20 @@ import com.google.common.base.Optional;
 
 import java.io.*;
 
+import static com.ahoubouby.utils.CommandLineHelper.*;
+
 public class AddressBook {
 
-    public static void main(String[] args)  {
-        try {
-            Contact contact = new Contact(
-                    "abdelwahed",
-                    "ahoubouby",
-                    new PhoneNumber("093939399"),
-                    new Email("ahououby@gmail.com"),
-                    new Family(Relationship.PARENT),
-                    Optional.absent()
-            ) ;
+    public static void main(String[] args) {
+        showWelcomeMessage();
+        processProgramArgs(args);
 
-            ObjectInputStream outputStream = new ObjectInputStream(new FileInputStream("contact.txt"));
-            Contact contact1 = (Contact) outputStream.readObject();
-            System.out.println(contact1);
-            outputStream.close();
-        }catch (Throwable ex) {
-            ex.printStackTrace();
+        while (true) {
+            String userCommand = getUserInput();
+            echoUserCommand(userCommand);
+            String feedback = executeCommand(userCommand);
+            System.out.println(feedback);
+            // showResultToUser(feedback);*/
         }
-       
     }
 }
