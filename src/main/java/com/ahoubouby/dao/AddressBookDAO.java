@@ -15,33 +15,24 @@ import java.util.Optional;
 
 public class AddressBookDAO implements BaseDao<Contact, String> {
     FileDataSource fileDataSource;
-    static AddressBookDAO addressBookDAO; 
-    
+    static AddressBookDAO addressBookDAO;
+
     public static AddressBookDAO getInstance(FileDataSource fileDataSource) {
         if (null == addressBookDAO)
             return new AddressBookDAO(fileDataSource);
-        return addressBookDAO; 
+        return addressBookDAO;
     }
-    
-    private  AddressBookDAO(FileDataSource fileDataSource) {
+
+    private AddressBookDAO(FileDataSource fileDataSource) {
         this.fileDataSource = fileDataSource;
     }
 
-    public String addString (String surname ) throws IOException {
-        fileDataSource.addObject(surname);
-        return surname;
-    }
+
     @Override
     public Contact save(Contact entity) {
-        try {
-            fileDataSource.addObject(entity);
-            return entity;
-        }catch (IOException exp) {
-            exp.printStackTrace();
-            return  null ;
-        }
-       
-        
+        fileDataSource.addObject(entity);
+        return entity;
+
     }
 
     @Override
@@ -61,7 +52,10 @@ public class AddressBookDAO implements BaseDao<Contact, String> {
 
     @Override
     public Optional<Contact> findById(String id) {
-        return Optional.empty();
+        return fileDataSource
+                .read()
+                .filter(c -> c.getSurname().equals(id))
+                .findFirst();
     }
 
     @Override

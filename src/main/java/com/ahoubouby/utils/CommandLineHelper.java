@@ -77,14 +77,18 @@ public class CommandLineHelper {
     private static void createFileIfMissing(String filePath) {
         try {
             final File storageFile = new File(filePath);
-            fileDataSource = FileDataSource.getInstance(storageFile);
-            addressBookDAO = AddressBookDAO.getInstance(fileDataSource);
+       
+            showToUser("file exist " + storageFile.exists());
             if (storageFile.exists()) {
+                fileDataSource = FileDataSource.getInstance(storageFile);
+                addressBookDAO = AddressBookDAO.getInstance(fileDataSource);
                 return;
             }
             //TODO: change message 
             showToUser(String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, filePath));
             if (storageFile.createNewFile()) {
+                fileDataSource = FileDataSource.getInstance(storageFile);
+                addressBookDAO = AddressBookDAO.getInstance(fileDataSource);
                 showToUser(String.format(MESSAGE_STORAGE_FILE_CREATED, filePath));
             }
         } catch (IOException ioe) {
@@ -252,7 +256,7 @@ public class CommandLineHelper {
                 + getUsageInfoForHelpCommand();
     }
 
-    private  static Category getCategory(String catCode) {
+    private static Category getCategory(String catCode) {
         switch (catCode) {
             case "f":
                 return new Family(Relationship.PARENT);
@@ -282,11 +286,24 @@ public class CommandLineHelper {
         contactBuilder.withHairColor(optHair);
 
         showFieldName("category");
-        String catCode = SCANNER.nextLine(); 
+        String catCode = SCANNER.nextLine();
         contactBuilder.withCategory(getCategory(catCode));
         addressBookDAO.save(contactBuilder.build());
 
         return contactBuilder.build().toString();
+    }
+
+    private static String executeFinContact(String surname) {
+        if (surname.isEmpty()) {
+            return getMessageForInvalidCommandInput(COMMAND_FIND_WORD,  getUsageInfoForAllCommands());
+        } else {
+            java.util.Optional<Contact> contact = addressBookDAO.findById(surname);
+            if (contact.isPresent())
+                return contact.get().toString();
+            else
+                return "nop";
+
+        }
     }
 
     public static String executeCommand(String userInputString) {
@@ -297,8 +314,8 @@ public class CommandLineHelper {
             case COMMAND_ADD_WORD:
                 return executeAddContact(commandArgs);
 
-//            case COMMAND_FIND_WORD:
-//                return executeFindPersons(commandArgs);
+            case COMMAND_FIND_WORD:
+                return executeFinContact(commandArgs);
 //            case COMMAND_LIST_WORD:
 //                return executeListAllPersonsInAddressBook();
 //            case COMMAND_DELETE_WORD:
@@ -308,8 +325,15 @@ public class CommandLineHelper {
 //            case COMMAND_HELP_WORD:
 //                return getUsageInfoForAllCommands();
             case COMMAND_EXIT_WORD:
-                exitProgram();
-            // Fallthrough
+                try {
+                    fileDataSource.close();
+                    exitProgram();
+                }catch (IOException e) {
+                    e.printStackTrace();
+                    exitProgram();
+                }
+                
+                // Fallthrough
             default:
                 return getMessageForInvalidCommandInput(commandType, getUsageInfoForAllCommands());
         }

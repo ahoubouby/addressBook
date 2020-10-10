@@ -17,7 +17,6 @@ public class AddressBook {
     public static void main(String[] args) {
         showWelcomeMessage();
         processProgramArgs(args);
-
         while (true) {
             String userCommand = getUserInput();
             echoUserCommand(userCommand);
@@ -25,5 +24,6 @@ public class AddressBook {
             System.out.println(feedback);
             // showResultToUser(feedback);*/
         }
+
     }
 }

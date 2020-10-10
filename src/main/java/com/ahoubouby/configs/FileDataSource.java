@@ -6,40 +6,75 @@ package com.ahoubouby.configs;
 
 import com.ahoubouby.model.Contact;
 
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import java.util.stream.Stream;
 
-public class FileDataSource implements Closeable{
+public class FileDataSource implements Closeable {
     ObjectOutputStream oos;
     ObjectInputStream ois;
     private static FileDataSource instance = null;
+    private File file;
+    private List<Contact> contacts;
 
-    private FileDataSource(ObjectOutputStream oos, ObjectInputStream ois) {
-        this.ois = ois;
-        this.oos = oos;
+
+    private FileDataSource(File file) {
+        this.file = file;
+        try {
+
+            if (file.length() > 0) {
+                this.ois = new ObjectInputStream(new FileInputStream(this.file));
+                readFromFile();
+            } else
+                contacts = new Vector<>();
+        } catch (Exception ex) {
+             
+        }
+
     }
 
     public static FileDataSource getInstance(File file) throws IOException {
         if (null == instance) {
-            return new FileDataSource(new ObjectOutputStream(new FileOutputStream(file)),
-                    new ObjectInputStream(new FileInputStream(file)));
+            return new FileDataSource(file);
         } else
             return instance;
     }
-    
-    public void  addObject (Object obejct)  throws IOException{
-        oos.writeObject(obejct);
-        oos.flush();
+
+    public void addObject(Contact object) {
+        contacts.add(object);
     }
 
-    public void  read (Contact contact)  throws IOException, ClassNotFoundException{
-        ArrayList<Contact> contactList =   (ArrayList<Contact> )ois.readObject();
+    public Stream<Contact> read() {
+        return contacts.stream();
+    }
+
+
+    private void writeContact(Contact contact) {
+        try {
+            oos.writeObject(contact);
+            oos.flush();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private void readFromFile() throws Exception {
+        contacts  = new ArrayList<>();
+        while (true) {
+            Contact contact = (Contact) ois.readObject();
+            contacts.add(contact);
+        }
+
     }
 
     @Override
     public void close() throws IOException {
+        this.oos = new ObjectOutputStream(new FileOutputStream(this.file));
+        contacts.forEach(this::writeContact);
         oos.close();
-        ois.close();
+        if (null != ois) ois.close();
     }
 }
